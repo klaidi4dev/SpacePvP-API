@@ -55,7 +55,7 @@ Replace `Tag` with the latest release version (e.g. `1.0.0`).
 **Maven** (`pom.xml`):
 ```xml
 <dependency>
-    <groupId>com.github.Klaidi4YT</groupId>
+    <groupId>com.github.klaidi4dev</groupId>
     <artifactId>SpacePvP-API</artifactId>
     <version>Tag</version>
     <scope>provided</scope>
@@ -65,14 +65,14 @@ Replace `Tag` with the latest release version (e.g. `1.0.0`).
 **Gradle Groovy** (`build.gradle`):
 ```groovy
 dependencies {
-    compileOnly 'com.github.Klaidi4YT:SpacePvP-API:Tag'
+    compileOnly 'com.github.klaidi4dev:SpacePvP-API:Tag'
 }
 ```
 
 **Gradle Kotlin** (`build.gradle.kts`):
 ```kotlin
 dependencies {
-    compileOnly("com.github.Klaidi4YT:SpacePvP-API:Tag")
+    compileOnly("com.github.klaidi4dev:SpacePvP-API:Tag")
 }
 ```
 
@@ -325,5 +325,6 @@ public void onDuelStart(PvPGameStartEvent event) {
 }
 
 ```
+
 
 

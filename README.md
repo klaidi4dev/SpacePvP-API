@@ -217,6 +217,25 @@ Methods for physical Cabins logic and **configuration** data.
 
 ---
 
+## ⚔️ GladiatorEventManager (Gladiator Events)
+
+Methods for managing the Gladiator free-for-all events.
+**Access:** `api.getGladiatorEventManager()`
+
+| Return Type | Method | Description |
+| :--- | :--- | :--- |
+| `boolean` | `isEventActive()` | Checks if the Gladiator event is currently active. |
+| `String` | `getActiveArenaName()` | Gets the name of the arena currently hosting the event (returns `null` if not active). |
+| `ApiGladiatorsStatus` | `getEventStatus()` | Gets the current status of the active Gladiator event (e.g., WAITING, INGAME). |
+| `List<UUID>` | `getPlayersInEvent()` | Gets a list of UUIDs of players currently participating in the event. |
+| `boolean` | `isPlayerInEvent(UUID uuid)` | Checks if a specific player is in the Gladiator event. |
+| `boolean` | `startEvent()` | Forces the Gladiator event to start. Returns false if already active or no arenas are available. |
+| `void` | `stopEvent(String reason)` | Forces the Gladiator event to stop. You can provide an optional broadcast message. |
+| `boolean` | `joinEvent(Player player)` | Adds a player to the Gladiator event. Returns false if event is full or not in WAITING status. |
+| `boolean` | `leaveEvent(Player player)` | Removes a player from the Gladiator event. |
+
+---
+
 ## 🎒 KitManager
 
 Methods for accessing Kit contents.
@@ -300,20 +319,23 @@ if (started) player1.sendMessage("Custom duel started!");
 
 ## 🔔 Events
 
-The API fires standard Bukkit events.
+The API fires standard Bukkit events. All primary game and queue events are now **Cancellable**, allowing third-party plugins to intercept and stop SpacePvP actions.
 
 | Event Class | Description | Cancellable |
 | :--- | :--- | :---: |
-| `PvPGameStartEvent` | Fired when a match begins. | ❌ |
-| `PvPGameEndEvent` | Fired when a match finishes. | ❌ |
+| `PvPGameStartEvent` | Fired when a match begins (after countdown). Cancelling prevents teleportation and fight start. | ✅ |
+| `PvPGameEndEvent` | Fired when a match finishes. *Note: Cancelling `DEATH` or `QUIT` reasons may break internal arena states.* | ✅ |
 | `ArenaQueueJoinEvent` | Player joins Arena queue. | ✅ |
-| `ArenaQueueLeaveEvent` | Player leaves Arena queue. | ❌ |
+| `ArenaQueueLeaveEvent` | Player leaves Arena queue. | ✅ |
 | `DefaultQueueJoinEvent` | Player joins 1vs1 queue. | ✅ |
-| `DefaultQueueLeaveEvent` | Player leaves 1vs1 queue. | ❌ |
+| `DefaultQueueLeaveEvent` | Player leaves 1vs1 queue. | ✅ |
+| `GladiatorEventStartEvent` | Fired when the Gladiator Event attempts to start its registration phase. | ✅ |
+| `GladiatorJoinEvent` | Fired when a player attempts to join a waiting Gladiator Event. | ✅ |
+| `GladiatorLeaveEvent` | Fired when a player attempts to leave a Gladiator Event before it starts. | ✅ |
 
 ### Listener Example:
 ```java
-import dev.ua.klaidi4_.spacepvpapi.events.*;
+import dev.ua._klaidi4_.spacepvpapi.events.*;
 
 @EventHandler
 public void onDuelStart(PvPGameStartEvent event) {
@@ -324,7 +346,14 @@ public void onDuelStart(PvPGameStartEvent event) {
     Bukkit.broadcastMessage("⚔️ Duel started: " + p1.getName() + " vs " + p2.getName() + " on " + arena);
 }
 
+@EventHandler
+public void onGladiatorStart(GladiatorEventStartEvent event) {
+    // Prevent the Gladiator event from starting automatically
+    event.setCancelled(true);
+    Bukkit.getLogger().info("Gladiator event auto-start prevented by custom plugin!");
+}
 ```
+
 
 
 
